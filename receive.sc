@@ -1,7 +1,7 @@
-//receiving from iPython
-
 s.boot;
 
+
+//sintetizador 1::
 (
 SynthDef( \sin, { | amp = 0.1, freq = 333, trig = 1 |
     var env, sig;
@@ -12,13 +12,29 @@ SynthDef( \sin, { | amp = 0.1, freq = 333, trig = 1 |
 
 h = Synth( \sin, [ \amp, 0.4 ] );
 
+
+
+//sintetizador 2: Noise + Pan
+
+
+
+
+//sintetizador 3: load file
+
+
+
+
+
+//receiving from iPython
+
 x = OSCFunc( { | msg, time, addr, port |
     var pyFreq;
 
     pyFreq = msg[1].asFloat;
     ( "freq is " + pyFreq ).postln;
-    h.set( \freq, pyFreq );
-}, '/print' );
+    h.set( \freq, pyFreq ); // variável h definida no sintetizador acima sendo acionada
+}, '/print' ); //caminho do sinal, conforme OSCFunc
 
 )
+
 
