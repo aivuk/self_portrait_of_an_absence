@@ -10,30 +10,21 @@ SynthDef( \sin, { | amp = 0.1, freq = 333, trig = 1 |
     Out.ar( [ 0 ], sig * 0.6 );
 }).add;
 
-h = Synth( \sin, [ \amp, 0.4 ] );
+h = Synth( \sin, [ \amp, 2 ] );
 
-
-
-//sintetizador 2: Noise + Pan
-
-
-
-
-//sintetizador 3: load file
-
-
-
-
+s.stop;
 
 //receiving from iPython
 
 x = OSCFunc( { | msg, time, addr, port |
-    var pyFreq;
-
+    var pyFreq, pyAmp;
     pyFreq = msg[1].asFloat;
+	pyAmp =  msg[2].asFloat;
     ( "freq is " + pyFreq ).postln;
-    h.set( \freq, pyFreq ); // variável h definida no sintetizador acima sendo acionada
-}, '/print' ); //caminho do sinal, conforme OSCFunc
+	( "amp is" + pyAmp).postln;
+    h.set( \freq, pyFreq );
+	h.set( \amp, pyAmp);
+}, '/sin' );
 
 )
 
