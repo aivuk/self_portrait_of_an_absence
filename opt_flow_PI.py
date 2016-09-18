@@ -11,7 +11,7 @@ import picamera.array
 # set up the camera
 camera = picamera.PiCamera()
 camera.resolution = (320, 240)
-camera.framerate = 24
+camera.framerate = 18
 # set up a video stream
 video = picamera.array.PiRGBArray(camera)
 
@@ -32,7 +32,7 @@ def draw_flow(img, flow, step=16):
     lines = np.vstack([x, y, x+fx, y+fy]).T.reshape(-1, 2, 2)
     lines = np.int32(lines + 0.5)
     vis = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-    cv2.polylines(vis, lines, 0, (0, 255, 0))
+    cv2.polylines(vis, lines, 0, (255, 0,0))
     for (x1, y1), (x2, y2) in lines:
         cv2.circle(vis, (x1, y1), 1, (0, 255, 0), -1)
     h, w, _ = flow.shape
@@ -42,20 +42,19 @@ def draw_flow(img, flow, step=16):
     return vis
 
 try:
-    camera.capture(video, format="rgb", use_video_port=True)
-    prevgray = np.rot90(np.fliplr(cv2.cvtColor(video.array, cv2.COLOR_RGB2GRAY)))
+    camera.capture(video, format="bgr", use_video_port=True)
+    prevgray = cv2.cvtColor(video.array, cv2.COLOR_BGR2GRAY)
     video.truncate(0)
 
-    for frameBuf in camera.capture_continuous(video, format ="rgb", use_video_port=True):
+    for frameBuf in camera.capture_continuous(video, format ="bgr", use_video_port=True):
         # convert color and orientation from openCV format to GRAYSCALE
-        frame = np.rot90(np.fliplr(frameBuf.array))
         video.truncate(0)
         gray = cv2.cvtColor(frameBuf.array, cv2.COLOR_BGR2GRAY)
 
-        flow = cv2.calcOpticalFlowFarneback(prevgray, gray, 0.5, 3, 15, 3, 5, 1.2, 0)
+        flow = cv2.calcOpticalFlowFarneback(prevgray, gray, pyr_scale=0.5, levels=3, winsize=15, iterations=3, poly_n=5, poly_sigma=1.2, flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         prevgray = gray
 
-        flow_im = draw_flow(gray, flow)
+        flow_im = np.fliplr(np.rot90(draw_flow(gray, flow)))
 
         surface = pygame.surfarray.make_surface(flow_im)
         screen.fill([0,0,0])
