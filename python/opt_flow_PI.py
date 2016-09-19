@@ -1,11 +1,17 @@
 #!/usr/bin/env python
 from __future__ import print_function
+import sys
 
+#Computer vision
 import cv2
 import numpy as np
-import sys
 import picamera
 import picamera.array
+
+#OSC
+import socket
+from txosc import osc
+from txosc import sync
 
 pygameMode = True
 if len(sys.argv) > 1:
@@ -22,6 +28,8 @@ if pygameMode:
 
     screen = pygame.display.set_mode([screen_width, screen_height])
 
+#OSC SC client
+oscClient = sync.UdpSender("localhost",57120)
 
 camera = picamera.PiCamera()
 camera.resolution = (320, 240)
@@ -43,7 +51,13 @@ def draw_flow(img, flow, step=16):
     h, w, _ = flow.shape
     left_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,:w/2]).mean()
     right_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,w/2:]).mean()
-    print(left_eye - right_eye)
+    diff = (left_eye - right_eye)
+    print(diff)
+    if abs(diff)>1:
+        msg = osc.Message("/secondSound")
+        msg.add(abs(diff)/100) #deviation
+        msg.add(5) #fixed rate
+        oscClient.send(msg)
     return vis
 
 try:
