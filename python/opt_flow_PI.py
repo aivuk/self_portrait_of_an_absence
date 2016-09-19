@@ -52,7 +52,8 @@ def draw_flow(img, flow, step=16):
     left_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,:w/2]).mean()
     right_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,w/2:]).mean()
     diff = (left_eye - right_eye)
-    print(diff)
+    if pygameMode:
+        print(diff)
     if abs(diff)>1:
         msg = osc.Message("/secondSound")
         detune = float(abs(diff)/10) #detune
