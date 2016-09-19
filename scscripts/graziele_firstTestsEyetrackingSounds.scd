@@ -84,7 +84,7 @@ s.waitForBoot{
         var pyDetune, pyRate;
         pyDetune = msg[1].asFloat;
         pyRate =  msg[2].asFloat;
-        ( "Deviation is " + pyDev ).postln;
+        ( "Detune is " + pyDetune ).postln;
         ( "Rate is" + pyRate).postln;
         Ndef(\secondSound).set(\detune, pyDetune);
         Ndef(\secondSound).set(\rate, pyRate);
