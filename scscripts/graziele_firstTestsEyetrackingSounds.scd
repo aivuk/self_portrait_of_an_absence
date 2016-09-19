@@ -17,15 +17,21 @@ s.waitForBoot{
 
 	//Buffer
 
-	buf = ();
-
-	buf.mySamples = ();
-
-	buf.mySamples.add(\birds -> Buffer.read(s, "../audio/bird.wav"));
-
-	buf.mySamples[\birds].play
+	b = Buffer.alloc(s, 100, 2);    // allocate 2 channels, and 100 frames
+	b.free;                         // free the memory (when you're finished using it)
 
 
+	// read a soundfile
+	b = Buffer.read(s, thisProcess.nowExecutingPath.dirname +/+ "../audio/bird.wav");
+
+	// now play it
+	(
+	x = SynthDef("tutorial-PlayBuf",{ arg out = 0, bufnum;
+    Out.ar( out,
+        PlayBuf.ar(1, bufnum, BufRateScale.kr(bufnum))
+    )
+	}).play(s,[\bufnum, b]);
+	)
 
     //Dictionary
     (
