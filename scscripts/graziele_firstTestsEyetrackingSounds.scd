@@ -14,6 +14,19 @@ duration: 0.3
 s.boot;
 s.waitForBoot{
 
+
+	//Buffer
+
+	buf = ();
+
+	buf.mySamples = ();
+
+	buf.mySamples.add(\birds -> Buffer.read(s, "../audio/bird.wav"));
+
+	buf.mySamples[\birds].play
+
+
+
     //Dictionary
     (
     q = ();
