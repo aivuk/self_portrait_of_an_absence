@@ -25,13 +25,13 @@ s.waitForBoot{
 	b = Buffer.read(s, thisProcess.nowExecutingPath.dirname +/+ "../audio/bird.wav");
 
 	// now play it
-	(
+
 	x = SynthDef("tutorial-PlayBuf",{ arg out = 0, bufnum;
     Out.ar( out,
         PlayBuf.ar(1, bufnum, BufRateScale.kr(bufnum))
     )
 	}).play(s,[\bufnum, b]);
-	)
+
 
     //Dictionary
     (
