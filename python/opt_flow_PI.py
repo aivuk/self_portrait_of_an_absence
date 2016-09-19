@@ -55,8 +55,10 @@ def draw_flow(img, flow, step=16):
     print(diff)
     if abs(diff)>1:
         msg = osc.Message("/secondSound")
-        msg.add(abs(diff)/100) #deviation
-        msg.add(5) #fixed rate
+        detune = float(abs(diff)/10) #detune
+        rate = float(abs(diff)/10)) #rate
+        msg.add(detune)
+        msg.add(rate)
         oscClient.send(msg)
     return vis
 

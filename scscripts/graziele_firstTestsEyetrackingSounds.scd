@@ -81,12 +81,12 @@ s.waitForBoot{
     );
     //OSC function updating Ndefs
     (OSCFunc( { | msg, time, addr, port |
-        var pyDev, pyRate;
-        pyDev = msg[1].asFloat;
+        var pyDetune, pyRate;
+        pyDetune = msg[1].asFloat;
         pyRate =  msg[2].asFloat;
         ( "Deviation is " + pyDev ).postln;
         ( "Rate is" + pyRate).postln;
-        Ndef(\secondSound).set(\deviation, pyDev);
+        Ndef(\secondSound).set(\detune, pyDetune);
         Ndef(\secondSound).set(\rate, pyRate);
     }, '/secondSound' );
     )
