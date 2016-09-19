@@ -57,7 +57,7 @@ def draw_flow(img, flow, step=16):
     if abs(diff)>1:
         msg = osc.Message("/secondSound")
         detune = float(abs(diff)/10) #detune
-        rate = float(abs(diff)/10)) #rate
+        rate = float(abs(diff)/10) #rate
         msg.add(detune)
         msg.add(rate)
         oscClient.send(msg)
