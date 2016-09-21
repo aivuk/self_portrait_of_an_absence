@@ -1,14 +1,36 @@
 #!/usr/bin/env python
 from __future__ import print_function
+import sys
 
-import pygame
+#Computer vision
 import cv2
 import numpy as np
-import sys
 import picamera
 import picamera.array
 
-# set up the camera
+#OSC
+import socket
+from txosc import osc
+from txosc import sync
+
+pygameMode = True
+if len(sys.argv) > 1:
+    pygameMode = False
+
+if pygameMode:
+    import pygame
+
+    pygame.init()
+
+    pygame.display.set_caption("OpenCV camera stream on Pygame")
+    screen_width = 320
+    screen_height = 240
+
+    screen = pygame.display.set_mode([screen_width, screen_height])
+
+#OSC SC client
+oscClient = sync.UdpSender("localhost",57120)
+
 camera = picamera.PiCamera()
 camera.resolution = (320, 240)
 camera.framerate = 18
@@ -16,15 +38,6 @@ camera.framerate = 18
 video = picamera.array.PiRGBArray(camera)
 
 # set up pygame, the library for displaying images
-pygame.init()
-pygame.display.set_caption("OpenCV camera stream on Pygame")
-# sets up window dimensions based on camera resolution
-screen = pygame.display.set_mode(list(camera.resolution))
-
-# variables for drawing onto the screen
-screen_width = 320
-screen_height = 240
-
 def draw_flow(img, flow, step=16):
     h, w = img.shape[:2]
     y, x = np.mgrid[step/2:h:step, step/2:w:step].reshape(2,-1).astype(int)
@@ -38,7 +51,16 @@ def draw_flow(img, flow, step=16):
     h, w, _ = flow.shape
     left_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,:w/2]).mean()
     right_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,w/2:]).mean()
-    print(left_eye - right_eye)
+    diff = (left_eye - right_eye)
+    if pygameMode:
+        print(diff)
+    if abs(diff)>1:
+        msg = osc.Message("/secondSound")
+        detune = float(abs(diff)/10) #detune
+        rate = float(abs(diff)/10) #rate
+        msg.add(detune)
+        msg.add(rate)
+        oscClient.send(msg)
     return vis
 
 try:
@@ -53,22 +75,21 @@ try:
 
         flow = cv2.calcOpticalFlowFarneback(prevgray, gray, pyr_scale=0.5, levels=3, winsize=15, iterations=3, poly_n=5, poly_sigma=1.2, flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         prevgray = gray
-
         flow_im = np.fliplr(np.rot90(draw_flow(gray, flow)))
+        if pygameMode:
+            surface = pygame.surfarray.make_surface(flow_im)
+            screen.fill([0,0,0])
+            screen.blit(surface, (0,0))
+            pygame.display.update()
 
-        surface = pygame.surfarray.make_surface(flow_im)
-        screen.fill([0,0,0])
-        screen.blit(surface, (0,0))
-        pygame.display.update()
-
-        # stop programme if esc key has been pressed
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                raise SystemExit
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    raise SystemExit
 
 
 # this is some magic code that detects when user hits ctrl-c (and stops the programme)
 except KeyboardInterrupt,SystemExit:
-    pygame.quit()
-    cv2.destroyAllWindows()
+    if pygameMode:
+        pygame.quit()
+        cv2.destroyAllWindows()
     sys.exit(0)
