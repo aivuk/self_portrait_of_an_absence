@@ -18,6 +18,17 @@ def draw_flow(img, flow, step=16):
     left_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,:w/2]).mean()
     right_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,w/2:]).mean()
     print(left_eye - right_eye)
+
+    # Calculate using angle information
+    left_eye_mean_velocity = flow[:,:w/2,:].sum(axis=0)
+    right_eye_mean_velocity = flow[:,w/2:,:].sum(axis=0)
+
+    left_eye_mean_velocity_norm = np.linalg.norm(left_eye_mean_velocity)
+    right_eye_mean_velocity_norm = np.linalg.norm(right_eye_mean_velocity)
+
+    eyes_cosine = left_eye_mean_velocity.dot(right_eye_mean_velocity.T)/left_eye_mean_velocity_norm*right_eye_mean_velocity_norm
+    print(eyes_cosine)
+
     return vis
 
 if __name__ == '__main__':
