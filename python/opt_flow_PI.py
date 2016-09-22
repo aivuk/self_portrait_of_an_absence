@@ -38,7 +38,7 @@ camera.framerate = 18
 video = picamera.array.PiRGBArray(camera)
 
 # set up pygame, the library for displaying images
-def draw_flow(img, flow, step=16):
+def play_flow(img, flow, step=16):
     h, w = img.shape[:2]
     y, x = np.mgrid[step/2:h:step, step/2:w:step].reshape(2,-1).astype(int)
     fx, fy = flow[y,x].T
@@ -52,6 +52,17 @@ def draw_flow(img, flow, step=16):
     left_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,:w/2]).mean()
     right_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,w/2:]).mean()
     diff = (left_eye - right_eye)
+
+    # Calculate using angle information
+    left_eye_mean_velocity = flow[:,:w/2,:].sum(axis=0)
+    right_eye_mean_velocity = flow[:,w/2:,:].sum(axis=0)
+
+    left_eye_mean_velocity_norm = np.linalg.norm(left_eye_mean_velocity)
+    right_eye_mean_velocity_norm = np.linalg.norm(right_eye_mean_velocity)
+
+    eyes_cosine = left_eye_mean_velocity.dot(right_eye_mean_velocity.T)/left_eye_mean_velocity_norm*right_eye_mean_velocity_norm
+    print(eyes_cosine)
+
     if pygameMode:
         print(diff)
     if abs(diff)>1:
@@ -75,7 +86,7 @@ try:
 
         flow = cv2.calcOpticalFlowFarneback(prevgray, gray, pyr_scale=0.5, levels=3, winsize=15, iterations=3, poly_n=5, poly_sigma=1.2, flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         prevgray = gray
-        flow_im = np.fliplr(np.rot90(draw_flow(gray, flow)))
+        flow_im = np.fliplr(np.rot90(play_flow(gray, flow)))
         if pygameMode:
             surface = pygame.surfarray.make_surface(flow_im)
             screen.fill([0,0,0])
