@@ -24,6 +24,9 @@ GPIO.setup(13, GPIO.IN)
 GPIO.setup(6, GPIO.IN)
 
 parameters = open('parameters.csv', 'w')
+parameters.write('"diff_eyes", "eyes_cosine", "mean_left_vel_x", ""mean_left_vel_y", ""mean_right_vel_x", ""mean_right_vel_y", "button1", "button2", "button3", "button4"\n')
+
+
 
 pygameMode = True
 if len(sys.argv) > 1:
@@ -62,7 +65,6 @@ def play_flow(img, flow, step=16):
     lines = np.vstack([x, y, x+fx, y+fy]).T.reshape(-1, 2, 2)
     lines = np.int32(lines + 0.5)
     vis = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-    cv2.polylines(vis, lines, 0, (255, 0,0))
     for (x1, y1), (x2, y2) in lines:
         cv2.circle(vis, (x1, y1), 1, (0, 255, 0), -1)
     h, w, _ = flow.shape
@@ -87,8 +89,20 @@ def play_flow(img, flow, step=16):
     button3 = GPIO.input(13)
     button4 = GPIO.input(6)
 
-    parameters.write('{}, {}, {}, {}, {}, {}\n'.format(diff, eyes_cosine, button1, button2, button3, button4))
-    parameters.flush()
+    if not np.isnan(eyes_cosine):
+        cv2.polylines(vis, lines, 0, (255, 0,0))
+        parameters.write('{}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n'.format(diff, 
+                                                                           eyes_cosine,
+                                                                           left_eye_mean_velocity[0],
+                                                                           left_eye_mean_velocity[1],
+                                                                           right_eye_mean_velocity[0],
+                                                                           right_eye_mean_velocity[1],
+                                                                           button1,
+                                                                           button2,
+                                                                           button3,
+                                                                           button4))
+        parameters.flush()
+
 
     if pygameMode:
         print("Difference => {}".format(diff))
@@ -96,7 +110,7 @@ def play_flow(img, flow, step=16):
         msg = osc.Message("/secondSound")
         #detune = float(abs(diff)/10) #detune
         rate = float(abs(diff)/10) #rate
-        detune = float(5 + 14*eyes_cosine)
+        detune = float(2.2 + 2*eyes_cosine)
         #rate = 5 + 14*eyes_cosine
         msg.add(detune)
         msg.add(rate)

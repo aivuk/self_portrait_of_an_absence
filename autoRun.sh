@@ -7,6 +7,6 @@ export DISPLAY=:0.0
 export `dbus-launch | grep ADDRESS`
 export `dbus-launch | grep PID`
 jackd -P95 -dalsa -dhw:0 -p1024 -n3 -s -r44100 &
-python $PYTHONF 0 &
 cd /home/pi/supercolliderStandaloneRPI2
-xvfb-run --auto-servernum ./sclang -a -l sclang.yaml $SCFILE #main supercollider script
+python $PYTHONF 0 & 
+xvfb-run --auto-servernum ./sclang -a -l sclang.yaml $SCFILE #main supercollider script 
