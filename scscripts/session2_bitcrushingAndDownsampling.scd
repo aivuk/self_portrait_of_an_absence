@@ -4,7 +4,7 @@ q = ();
 
 q.mySamples = ();
 
-q.mySamples.add(\birds -> Buffer.read(s, "/Users/himalo/Desktop/Graziele/bird.wav"));
+q.mySamples.add(\birds -> Buffer.read(s, "/Users/grazielelautenschlaeger/self_portrait_of_an_absence/audio/bird.wav"));
 
 q.mySamples[\birds].play
 
