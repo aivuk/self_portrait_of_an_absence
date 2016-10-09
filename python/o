@@ -1,52 +1,66 @@
-Eyes cosine => nan
-Difference => 9.94594665826e-06
-Eyes cosine => -0.954112350941
-Difference => 16.7018260956
+Eyes cosine => -0.92402023077
+Difference => 3.4273815155
+Button pressed:  5
+Eyes cosine => -0.22869220376
+Difference => 13.9084739685
+Button pressed:  5
+Eyes cosine => 0.844155728817
+Difference => -0.0195328593254
+Button pressed:  1
+Eyes cosine => 0.994831621647
+Difference => -0.0315290093422
+Button pressed:  1
+Eyes cosine => 0.998792767525
+Difference => -0.0556738376617
+Button pressed:  5
+Eyes cosine => 0.966307580471
+Difference => -0.225732862949
+Button pressed:  2
+Eyes cosine => 0.989753246307
+Difference => -0.024914264679
+Button pressed:  2
 Eyes cosine => nan
 Difference => 0
-Eyes cosine => -0.987101852894
-Difference => 0.407681852579
+Button pressed:  5
+Eyes cosine => 0.998503267765
+Difference => -0.104686141014
+Button pressed:  5
 Eyes cosine => nan
 Difference => 0
-Eyes cosine => 0.79021859169
-Difference => 0.184601858258
-Eyes cosine => 0.851556718349
-Difference => 0.380312621593
-Eyes cosine => -0.916018307209
-Difference => 0.052965939045
-Eyes cosine => -0.999731838703
-Difference => -24.685300827
-Eyes cosine => -0.167876109481
-Difference => -0.261568248272
-Eyes cosine => -0.380866467953
-Difference => 12.809794426
-Eyes cosine => -0.400134146214
-Difference => 25.9813747406
-Eyes cosine => -0.971236944199
-Difference => 19.5313491821
-Eyes cosine => -0.0632389709353
-Difference => 0.869520485401
-Eyes cosine => -0.311808139086
-Difference => 0.844386279583
-Eyes cosine => 0.809223175049
-Difference => 0.55847799778
-Eyes cosine => 0.815728545189
-Difference => -0.662681818008
-Eyes cosine => 0.767572700977
-Difference => -2.16986870766
-Eyes cosine => 0.796288669109
-Difference => -2.20096445084
-Eyes cosine => 0.516727030277
-Difference => -2.65832495689
-Eyes cosine => -0.989432930946
-Difference => 79.1715087891
-Eyes cosine => 0.250296235085
-Difference => -24.2267303467
-Eyes cosine => 0.846163153648
-Difference => 0.69908285141
-Eyes cosine => -0.994511663914
-Difference => 23.4969425201
-Eyes cosine => -0.987971663475
-Difference => -0.347295880318
-Eyes cosine => 0.842735111713
-Difference => -0.0365899801254
+Button pressed:  5
+Eyes cosine => 0.825248837471
+Difference => -0.0915736556053
+Button pressed:  5
+Eyes cosine => -0.789509832859
+Difference => -0.0210970044136
+Button pressed:  5
+Eyes cosine => -0.634716510773
+Difference => 0.0144739747047
+Button pressed:  5
+Eyes cosine => -0.704206764698
+Difference => -0.1067289114
+Button pressed:  5
+Eyes cosine => 0.950706839561
+Difference => -0.127440690994
+Button pressed:  5
+Eyes cosine => -0.965814828873
+Difference => -0.0190907120705
+Button pressed:  5
+Eyes cosine => 0.736375808716
+Difference => -0.174329221249
+Button pressed:  5
+Eyes cosine => 0.935476660728
+Difference => -0.18001806736
+Button pressed:  5
+Eyes cosine => -0.231119722128
+Difference => -0.161176979542
+Button pressed:  5
+Eyes cosine => -0.724258363247
+Difference => -0.0824856758118
+Button pressed:  5
+Eyes cosine => -0.109505772591
+Difference => 0.102620244026
+Button pressed:  5
+Eyes cosine => -0.469051599503
+Difference => -0.0322567820549
+Button pressed:  5

@@ -22,10 +22,10 @@ GPIO.setup(26, GPIO.IN)
 GPIO.setup(19, GPIO.IN)
 GPIO.setup(13, GPIO.IN)
 GPIO.setup(6, GPIO.IN)
+GPIO.setup(21, GPIO.IN)
 
 parameters = open('parameters.csv', 'w')
 parameters.write('"diff_eyes", "eyes_cosine", "mean_left_vel_x", ""mean_left_vel_y", ""mean_right_vel_x", ""mean_right_vel_y", "button1", "button2", "button3", "button4"\n')
-
 
 
 pygameMode = True
@@ -56,6 +56,7 @@ button1 = 0
 button2 = 0
 button3 = 0
 button4 = 0
+button5 = 0
 
 # set up pygame, the library for displaying images
 def play_flow(img, flow, step=16):
@@ -72,6 +73,7 @@ def play_flow(img, flow, step=16):
     right_eye = np.apply_along_axis(np.linalg.norm, 0, flow[:,w/2:]).mean()
     diff = (left_eye - right_eye)
     diff = diff if np.isfinite(diff) else 0
+    diff = (diff + 50)/100
 
     # Calculate using angle information
     left_eye_mean_velocity = flow[:,:w/2].mean(axis=1).mean(axis=0)
@@ -82,17 +84,20 @@ def play_flow(img, flow, step=16):
     right_eye_mean_velocity_norm = np.linalg.norm(right_eye_mean_velocity)
 
     eyes_cosine = left_eye_mean_velocity.dot(right_eye_mean_velocity.T)/(left_eye_mean_velocity_norm*right_eye_mean_velocity_norm)
-    print("Eyes cosine => {}".format(eyes_cosine))
+#    print("Eyes cosine => {}".format(eyes_cosine))
 
     button1 = GPIO.input(26)
     button2 = GPIO.input(19)
     button3 = GPIO.input(13)
     button4 = GPIO.input(6)
+    button5 = GPIO.input(21)
 
     if not np.isnan(eyes_cosine):
         cv2.polylines(vis, lines, 0, (255, 0,0))
-        parameters.write('{}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n'.format(diff, 
-                                                                           eyes_cosine,
+        rate = float(abs(diff)*2) #rate
+        rate = rate if rate <= 1 else 1
+        parameters.write('{}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n'.format(rate, 
+                                                                           0.5*eyes_cosine + 0.5,
                                                                            left_eye_mean_velocity[0],
                                                                            left_eye_mean_velocity[1],
                                                                            right_eye_mean_velocity[0],
@@ -106,19 +111,48 @@ def play_flow(img, flow, step=16):
 
     if pygameMode:
         print("Difference => {}".format(diff))
-    if abs(diff)>1:
-        msg = osc.Message("/secondSound")
+
+    
+    button_pressed = -1 
+
+    for btn_i, btn_value in enumerate([button1, button2, button3, button4, button5]): 
+        # Filtra o botao quebrado 'and btn_i != 4'
+        #if btn_value == 1 and btn_i != 4:
+        if btn_value == 1:
+           button_pressed = btn_i 
+           break
+
+    if button_pressed >= 0:
+        print("Button pressed: ", button_pressed)
+        buttons_msg = osc.Message("/buttons")
+        buttons_msg.add(button_pressed)
+        oscClient.send(buttons_msg)
+
+    if not np.isnan(eyes_cosine):
+        tracking_msg = osc.Message("/tracking")
         #detune = float(abs(diff)/10) #detune
-        rate = float(abs(diff)/10) #rate
-        detune = float(2.2 + 2*eyes_cosine)
+        rate = float(abs(diff)*2) #rate
+        rate = rate if rate <= 1 else float(1)
+        detune = float(0.5*eyes_cosine + 0.5)
+        left_x = float(left_eye_mean_velocity[0])
+        left_y = float(left_eye_mean_velocity[1])
+        right_x = float(right_eye_mean_velocity[0])
+        right_y = float(right_eye_mean_velocity[1])
         #rate = 5 + 14*eyes_cosine
-        msg.add(detune)
-        msg.add(rate)
-        msg.add(button1)
-        msg.add(button2)
-        msg.add(button3)
-        msg.add(button4)
-        oscClient.send(msg)
+        
+        tracking_msg.add(rate)
+        tracking_msg.add(detune)
+        tracking_msg.add(left_x)
+        tracking_msg.add(left_y)
+        tracking_msg.add(right_x)
+        tracking_msg.add(right_y)
+
+        print("{} | {} | {} | {} | {} | {}".format(rate, detune, left_x, left_y, right_x, right_y))
+        #msg.add(button1)
+        #msg.add(button2)
+        #msg.add(button3)
+        #msg.add(button4)
+        oscClient.send(tracking_msg)
     return vis
 
 try:
