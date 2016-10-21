@@ -64,7 +64,6 @@ s.waitForBoot{
 		*/
 
 
-
 		//SOUND MODE #1: Percussion melody
 		(
 			q.myFreqs = [262, 410, 786, 1245, 1309, 1830, 2071];
@@ -77,7 +76,7 @@ s.waitForBoot{
 			Spec.add(\deviation, [0, 0.99, \lin]);
 		);
 		(
-			Ndef(\secondSound, {|rel = 0.3, atk = 0.01, amp = 0.5, detune = 1,
+			Ndef(\secondSound, {|rel = 0.3, atk = 0.01, amp = 1, detune = 1,
 				blend = 0, rate = 1, deviation = 0 |
 
 				var freqs, amps, son, sonEnv, trig, noise, noiseEnv, ramp, fbkIn, fbkOut, randomTrig, highLow;
@@ -115,13 +114,12 @@ s.waitForBoot{
 		//SOUND MODE #2: Downsampling and bitcrushing effect
 
 
-
 		Spec.add(\bits, [16, 1]);
 		Spec.add(\downsamp, [1, 100, \exp]);
 		Spec.add(\blend, [0, 1, \lin]);
-        Spec.add(\mod, [0, 4, \lin]);
+       		Spec.add(\mod, [0, 4, \lin]);
 
-		Ndef(\samplePlayerA, {|amp = 0.1, bufnum = 0,  bits=16, downsamp=2, blend = 0 |
+		Ndef(\samplePlayerA, {|amp = 1, bufnum = 0,  bits=8, downsamp=50, blend = 0 |
 
 			var son = PlayBuf.ar(2, bufnum, 1, 1, 0,1);
 			var bitReduc = son.round(0.5 ** bits);
@@ -208,7 +206,6 @@ s.waitForBoot{
 
 
 
-
 		/////////////////////
 		//turn off func///
 		q.switchAllOffFunc = {
@@ -243,19 +240,19 @@ s.waitForBoot{
 
 		};
 
-		q.map2Func = {|ev, val0, val1, val2, val3, val4|
+		q.map2Func = {|ev, val0, val1, val2, val3, val4, val5|
 			Ndef(\samplePlayerA).set(\bits, \bits.asSpec.map(val1));
-			Ndef(\samplePlayerA).set(\downsamp, \downsamp.asSpec.map(val2));
-			Ndef(\samplePlayerA).set(\blend, \blend.asSpec.map(val4));
+			Ndef(\samplePlayerA).set(\downsamp, \downsamp.asSpec.map(val1));
+			Ndef(\samplePlayerA).set(\blend, \blend.asSpec.map(val0));
 
 		};
 
 		q.map3Func = {|ev, val0, val1, val2, val3, val4, val5|
 
 			Tdef(\playNotesRandomly).set(\mod, \mod.asSpec.map(val1));
-			Tdef(\playNotesRandomly).set(\rel, \rel.asSpec.map(val2));
+			Tdef(\playNotesRandomly).set(\rel, \rel.asSpec.map(val0));
 			Tdef(\playNotesRandomly).set(\bits, \bits.asSpec.map(val4));
-			Tdef(\playNotesRandomly).set(\downsamp, \downsamp.asSpec.map(val1));
+			Tdef(\playNotesRandomly).set(\downsamp, \downsamp.asSpec.map(val2));
 
 		};
 
