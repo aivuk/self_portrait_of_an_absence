@@ -38,8 +38,8 @@ if pygameMode:
     pygame.init()
 
     pygame.display.set_caption("OpenCV camera stream on Pygame")
-    screen_width = 320
-    screen_height = 240
+    screen_width =1024 
+    screen_height = 768
 
     screen = pygame.display.set_mode([screen_width, screen_height])
 
